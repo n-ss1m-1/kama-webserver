@@ -103,13 +103,13 @@ int main(int argc,char *argv[]) {
     const int CAPACITY = 5;  
     KamaCache::KLfuCache<int, std::string> lfu(CAPACITY);
     //第三步启动底层网络模块
-    EventLoop loop();
+    EventLoop loop;
     InetAddress addr(8080);
     EchoServer server(&loop, addr, "EchoServer");
     server.start();
  // 主loop开始事件循环  epoll_wait阻塞 等待就绪事件(主loop只注册了监听套接字的fd，所以只会处理新连接事件)
     std::cout << "================================================Start Web Server================================================" << std::endl;
-    loop.loop;
+    loop.loop();
     std::cout << "================================================Stop Web Server=================================================" << std::endl;
     //结束日志打印
     log.stop();
