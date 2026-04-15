@@ -110,7 +110,7 @@ void TcpConnection::handleRead(Timestamp receiveTime)
             handleClose();      //！！！此时服务器被动关闭连接
             break;
         }
-        else if (savedErrno == EAGAIN || savedErrno == EWOULDBLOCK) 
+        else if (n < 0 && (savedErrno == EAGAIN || savedErrno == EWOULDBLOCK))
         {
             // 关键：ET 模式下，读到 EAGAIN 说明数据已读完
             break;
@@ -134,33 +134,41 @@ void TcpConnection::handleWrite()
     if (channel_->isWriting())      //防御性编程
     {
         int savedErrno = 0;
-        ssize_t n = outputBuffer_.writeFd(channel_->fd(), &savedErrno);
-        if (n > 0)
+        while(true)
         {
-            outputBuffer_.retrieve(n);  //回收已读数据空间：移动读指针
-            //检查发送缓冲区是否清空
-            if (outputBuffer_.readableBytes() == 0)
+            ssize_t n = outputBuffer_.writeFd(channel_->fd(), &savedErrno);
+            if (n > 0)
             {
-                channel_->disableWriting(); //！注销监听的可写事件
-                if (writeCompleteCallback_) //通知应用层：数据发送完毕
+                outputBuffer_.retrieve(n);  //回收已读数据空间：移动读指针
+                //检查发送缓冲区是否清空
+                if (outputBuffer_.readableBytes() == 0)
                 {
-                    // TcpConnection对象在其所在的subloop中 向pendingFunctors_中加入回调
-                    loop_->queueInLoop(
-                        std::bind(writeCompleteCallback_, shared_from_this()));         //▲该回调函数为成员变量 不需要取地址！
-                }
-                /*
-                连接正在断开(之前已执行shutdown 但是发送缓冲区中还有数据未发送 发送完毕后 在handlewrite此处调用真正的关闭)
-                ->继续关闭流程(调用Socket的shutdownwrite() 发送FIN 真正实现半关闭)
-                */
-                if (state_ == kDisconnecting)
-                {
-                    shutdownInLoop();
+                    channel_->disableWriting(); //！注销监听的可写事件
+                    if (writeCompleteCallback_) //通知应用层：数据发送完毕
+                    {
+                        // TcpConnection对象在其所在的subloop中 向pendingFunctors_中加入回调
+                        loop_->queueInLoop(
+                            std::bind(writeCompleteCallback_, shared_from_this()));         //▲该回调函数为成员变量 不需要取地址！
+                    }
+                    /*
+                    连接正在断开(之前已执行shutdown 但是发送缓冲区中还有数据未发送 发送完毕后 在handlewrite此处调用真正的关闭)
+                    ->继续关闭流程(调用Socket的shutdownwrite() 发送FIN 真正实现半关闭)
+                    */
+                    if (state_ == kDisconnecting)
+                    {
+                        shutdownInLoop();
+                    }
                 }
             }
-        }
-        else
-        {
-            LOG_ERROR<<"TcpConnection::handleWrite";
+            else if (n < 0 && (savedErrno == EAGAIN || savedErrno == EWOULDBLOCK))
+            {
+                break;
+            }
+            else
+            {
+                LOG_ERROR<<"TcpConnection::handleWrite";
+                break;
+            }
         }
     }
     else

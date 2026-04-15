@@ -45,30 +45,43 @@ void Acceptor::listen()
     listenning_ = true;
     acceptSocket_.listen();         // 普通的listen方法
     acceptChannel_.enableReading(); // 将监听acceptChannel_的 读事件 ▲注册至Poller(等待连接) !重要
+    acceptChannel_.enableET();
 }
 
 // listenfd有事件发生了，就是有新用户连接了
 void Acceptor::handleRead()
 {
-    InetAddress peerAddr;
-    int connfd = acceptSocket_.accept(&peerAddr);       //返回新连接的sockfd
-    if (connfd >= 0)
+    while(true)
     {
-        if (NewConnectionCallback_) //若TcpServer设置了回调 则执行
+        InetAddress peerAddr;
+        int connfd = acceptSocket_.accept(&peerAddr);       //返回新连接的sockfd
+        int savedErrno = errno;
+        if (connfd >= 0)
         {
-            NewConnectionCallback_(connfd, peerAddr); // 轮询找到subLoop 唤醒并分发当前的新客户端的Channel
+            if (NewConnectionCallback_) //若TcpServer设置了回调 则执行
+            {
+                NewConnectionCallback_(connfd, peerAddr); // 轮询找到subLoop 唤醒并分发当前的新客户端的Channel
+            }
+            else    //若未设置回调 则关闭连接(避免无人管理且占用资源)
+            {
+                ::close(connfd);
+            }
         }
-        else    //若未设置回调 则关闭连接(避免无人管理且占用资源)
+        else if()
+        else
         {
-            ::close(connfd);
+            if (savedErrno == EAGAIN || savedErrno == EWOULDBLOCK)
+            {
+                // ET模式核心：没有新连接了，退出循环
+                break;
+            }
+            LOG_ERROR<<"accept Err";
+            if (savedErrno == EMFILE)
+            {
+                LOG_ERROR<<"sockfd reached limit";
+            }
+            break;
         }
     }
-    else
-    {
-        LOG_ERROR<<"accept Err";
-        if (errno == EMFILE)
-        {
-            LOG_ERROR<<"sockfd reached limit";
-        }
-    }
+
 }
