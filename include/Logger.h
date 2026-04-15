@@ -77,10 +77,10 @@ public:
     static FlushFunc g_flush;
     
     // 静态方法：设置全局/静态输出函数      
-    static void setOutput(OutputFunc) {g_output = OutputFunc;}
+    static void setOutput(OutputFunc func) {g_output = func;}
     
     // 静态方法：设置全局/静态刷新函数
-    static void setFlush(FlushFunc) {g_flush = FlushFunc;}
+    static void setFlush(FlushFunc func) {g_flush = func;}
 
 private:
     // 内部实现类，封装日志的具体实现细节
