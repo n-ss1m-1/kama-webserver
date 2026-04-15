@@ -1,4 +1,5 @@
-#include <unistd.h>
+#include <fcntl.h>   // 定义 fcntl()、F_GETFL、F_SETFL、O_NONBLOCK
+#include <unistd.h>  
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <string.h>
