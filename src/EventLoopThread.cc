@@ -49,7 +49,7 @@ EventLoop *EventLoopThread::startLoop()
  */
 void EventLoopThread::threadFunc()
 {
-    EventLoop loop(); // 1.创建子线程的loop
+    EventLoop loop; // 1.创建子线程的loop
 
     if (callback_)  //2.执行用户初始化的回调(若设置)
     {
