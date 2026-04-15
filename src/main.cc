@@ -103,7 +103,7 @@ int main(int argc,char *argv[]) {
     const int CAPACITY = 5;  
     KamaCache::KLfuCache<int, std::string> lfu(CAPACITY);
     //第三步启动底层网络模块
-    EventLoop loop(-1);
+    EventLoop loop();
     InetAddress addr(8080);
     EchoServer server(&loop, addr, "EchoServer");
     server.start();
