@@ -67,7 +67,6 @@ void Acceptor::handleRead()
                 ::close(connfd);
             }
         }
-        else if()
         else
         {
             if (savedErrno == EAGAIN || savedErrno == EWOULDBLOCK)
