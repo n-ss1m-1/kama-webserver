@@ -77,7 +77,7 @@ public:
     static FlushFunc g_flush;
     
     // 静态方法：设置全局/静态输出函数      
-    static void setOutput(OutputFunc) {g_output = outputFunc;}
+    static void setOutput(OutputFunc) {g_output = OutputFunc;}
     
     // 静态方法：设置全局/静态刷新函数
     static void setFlush(FlushFunc) {g_flush = FlushFunc;}
