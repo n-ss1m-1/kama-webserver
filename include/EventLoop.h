@@ -81,6 +81,7 @@ private:
 
     Timestamp pollRetureTime_; // Poller返回发生事件的Channels的时间点
     std::unique_ptr<Poller> poller_;    //监听事件(mainloop:连接请求事件 subloop:读写等事件)
+    const int kPollTimeMs_;         //epoll_wait()超时时间
     std::unique_ptr<TimerQueue> timerQueue_;
     int wakeupFd_; // 作用：当mainLoop获取一个新用户的Channel 需通过轮询算法选择一个subLoop 通过该成员唤醒subLoop处理Channel
     std::unique_ptr<Channel> wakeupChannel_;    // wakeup封装为channel 注册到自己的poller中 关注可读事件 -> 用于在任务队列中需要执行时 解开阻塞的poll()

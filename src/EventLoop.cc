@@ -13,7 +13,7 @@
 thread_local EventLoop *t_loopInThisThread = nullptr;
 
 // 定义默认的Poller IO复用接口的超时时间
-const int kPollTimeMs = 10000; // 10000毫秒 = 10秒钟
+//const int kPollTimeMs = 10000; // 10000毫秒 = 10秒钟
 
 /* 创建线程之后主线程和子线程谁先运行是不确定的。
  * 通过一个eventfd在线程之间传递数据的好处是多个线程无需上锁就可以实现同步。
@@ -41,12 +41,13 @@ int createEventfd()
     return evtfd;
 }
 
-EventLoop::EventLoop()
+EventLoop::EventLoop(int KPollTimeMs)
     : looping_(false)
     , quit_(false)
     , callingPendingFunctors_(false)
     , threadId_(CurrentThread::tid())
     , poller_(Poller::newDefaultPoller(this))
+    , kPollTimeMs_(KPollTimeMs)
     , wakeupFd_(createEventfd())
     , wakeupChannel_(new Channel(this, wakeupFd_))
 {
