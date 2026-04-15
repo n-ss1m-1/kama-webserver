@@ -76,7 +76,7 @@ void Thread::setDefaultName()
     if (name_.empty())
     {
         char buf[32] = {0};
-        snprintf(buf, sizeof buf, "Thread%d", numCreated_);
+        snprintf(buf, sizeof buf, "Thread%d", numCreated_.load());  //用 .load() 方法安全地读取原子变量的当前值
         name_ = buf;
     }
 }
