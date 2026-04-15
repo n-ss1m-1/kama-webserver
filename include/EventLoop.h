@@ -19,7 +19,7 @@ class EventLoop : noncopyable
 public:
     using Functor = std::function<void()>;  //只接受[无参+无返回值]的可调用对象
 
-    EventLoop();
+    EventLoop(int kPollTimeMs);
     ~EventLoop();
 
     // 开启事件循环
