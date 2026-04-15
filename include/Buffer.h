@@ -16,8 +16,8 @@
 class Buffer
 {
 public:
-    static const size_t CheapPrepend = 8;      //缓冲区最前端 初始预留的空间大小 可用于添加协议头
-    static const size_t InitialSize = 1024;    //默认缓冲区大小
+    static const size_t CheapPrepend = 8;       //缓冲区最前端 初始预留的空间大小 可用于添加协议头
+    static const size_t InitialSize = 32768;    //默认缓冲区大小 1024->32768
 
     explicit Buffer(size_t initialSize = InitialSize)       //xxxxxbuffer初始容量 readerIndex_初始位置
         : buffer_(CheapPrepend + initialSize)
