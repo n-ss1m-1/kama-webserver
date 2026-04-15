@@ -46,7 +46,7 @@ private:
     }
 
     // 接受到客户数据后的回调操作：对客户发送过来的数据进行业务逻辑处理--此处为回响
-    void onMessage(const TcpConnectionPtr& conn,Buffer* buf, std::chrono::steady_clock::time_point receiveTime)
+    void onMessage(const TcpConnectionPtr& conn,Buffer* buf, Timestamp receiveTime)
     {
             std::string msg = buf->retrieveAllAsString();
 
