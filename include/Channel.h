@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sys/epoll.h>
 #include <functional>
 #include <memory>
 
