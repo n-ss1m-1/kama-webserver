@@ -85,7 +85,7 @@ void EventLoop::loop()
     while (!quit_)
     {
         activeChannels_.clear();        //初始化channel列表
-        pollRetureTime_ = poller_->poll(kPollTimeMs_, &activeChannels_);   // activeChannels_为传出参数
+        pollRetureTime_ = poller_->poll(kPollTimeMs, &activeChannels_);   // activeChannels_为传出参数
         for (Channel *channel : activeChannels_)
         {
             // Poller监听哪些channel发生了事件 然后上报给EventLoop(↑) 然后EventLoop(↓)通知channel处理相应的事件 而channel通过调用TcpConnection设置的回调函数 进行事件处理(具体是可读写事件)
