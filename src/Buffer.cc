@@ -15,7 +15,7 @@
 ssize_t Buffer::readFd(int fd, int *saveErrno)
 {
     // 栈额外空间，用于从套接字往出读时，当buffer_暂时不够用时暂存数据，待buffer_重新分配足够空间后，在把数据交换给buffer_。
-    char extrabuf[65536] = {0}; // 栈上内存空间 65536/1024 = 64KB
+    char extrabuf[1] = {0}; // 栈上内存空间 65536/1024 = 64KB
 
     /*
     struct iovec {
