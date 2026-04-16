@@ -135,7 +135,7 @@ const char* getErrnoMsg(int savedErrno);
 #else
     // 关闭日志时，返回一个空的LogStream，避免日志输出
     //#define LOG(level) LogStream()
-    #define LOG_DEBUG LogStream()
+    #define LOG_DEBUG Logger(__FILE__, __LINE__, Logger::DEBUG).stream()
     #define LOG_INFO LogStream()
     #define LOG_WARN LogStream()
     #define LOG_ERROR LogStream()

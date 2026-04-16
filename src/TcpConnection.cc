@@ -113,6 +113,7 @@ void TcpConnection::handleRead(Timestamp receiveTime)
         else if (n < 0 && (savedErrno == EAGAIN || savedErrno == EWOULDBLOCK))
         {
             // 关键：ET 模式下，读到 EAGAIN 说明数据已读完
+            LOG_DEBUG<<"readv: EAGAIN";
             break;
         }
         else // 出错了
@@ -162,6 +163,7 @@ void TcpConnection::handleWrite()
             }
             else if (n < 0 && (savedErrno == EAGAIN || savedErrno == EWOULDBLOCK))
             {
+                LOG_DEBUG<<"write: EAGAIN";
                 break;
             }
             else
