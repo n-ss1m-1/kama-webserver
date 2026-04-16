@@ -55,7 +55,7 @@ TcpConnection::TcpConnection(EventLoop *loop,
     // 设置非阻塞socket
     socket_->setNonBlocking();
     socket_->setKeepAlive(true);        //持久连接
-    socket_->setTcpNoDelay(true);       //禁用nagle算法
+    //socket_->setTcpNoDelay(true);       //禁用nagle算法
 }
 
 TcpConnection::~TcpConnection()
